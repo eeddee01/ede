@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Markazi+Text&display=swap');
+.Swtichers{
+    width:20em;
+    background: #111111;
+    margin:1em
+}
+.Swtichers ul{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    list-style: none
+}
+.Swtichers ul li{
+    text-align:center;
+    padding:1em 0;
+    width:100%;
+    cursor: pointer;
+    color:#f1f1f1;
+    font-family: 'Markazi Text', serif;
+}
+
+.Ss{
+    background:#223ccc;
+}
+@media only screen and (max-width:986px){
+
+    .Swtichers{
+        width:90%;
+        background: #111111;
+        margin:0 auto;
+    }
+
+}

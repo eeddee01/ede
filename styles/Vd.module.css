@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500&display=swap');
+
+.Vd{
+    width: 90%;
+    margin: 0 auto;
+    padding: 1em 0;
+}
+
+.Ivd{
+    width: 70%;
+    height: 25em;
+    margin: 0 auto;
+    position: relative
+}
+.Ivd iframe{
+    width: 100%;
+    height: 100%;
+}
+
+.Ivdinfo{
+    padding: 1em;
+}
+.Ivdinfo h1{
+    text-align: center;
+    color:#183cb3;
+    margin:1em 0;
+    font-family: 'Cairo', sans-serif;
+}
+.Ivdinfo p{
+    line-height: 1.7em;
+    font-size: 1.3rem;
+    color: #303030;
+    font-family: 'Tajawal', sans-serif;
+}
+.Ivdinfo span{
+    color: #183cb3;
+}
+.logo{
+    width:100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background:#111111;
+    color:#f1f1f1;
+    font-family: 'Tajawal', sans-serif;
+    display:grid;
+    place-items: center
+}
+@media only screen and (max-width:986px){
+    .Vd{
+        width: 100%;
+        padding: 1em ;
+    }
+    
+    .Ivd{
+        width: 100%;
+        height: 15em;
+    }
+}
