@@ -5,6 +5,7 @@ import {
   InMemoryCache,
   ApolloProvider
 } from "@apollo/client";
+import {useState,useEffect} from 'react'
 
 const client = new ApolloClient({
   uri: 'https://test2153.herokuapp.com/',
@@ -26,10 +27,26 @@ const client = new ApolloClient({
 
 
 function MyApp({ Component, pageProps }) {
+
+  const [uid,setUid] = useState(false)
+  useEffect(() => {
+
+    const cookie = document.cookie
+  .split(';')
+  .map(e=>e.split('='))
+  .reduce((acc,[key,value])=>
+    ({...acc,[key.trim()]:decodeURIComponent(value)})
+  ,{})
+
+  setUid(cookie.uid)
+
+  }, [])
+
+
   return <>
     <ApolloProvider client={client}>
       <Layout>
-        <Component {...pageProps} />
+        <Component uid={uid || undefined } {...pageProps} />
       </Layout>
     </ApolloProvider>
   </>

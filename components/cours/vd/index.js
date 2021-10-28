@@ -1,58 +1,42 @@
-import {useRef} from 'react'
+import {useEffect} from 'react'
+import {useLazyQuery,gql} from '@apollo/client'
+import { useRouter } from 'next/router'
 import Style from '../../../styles/Vd.module.css'
-import {useQuery,gql} from '@apollo/client'
-import {useRouter} from 'next/router'
 
-const GET_VD = gql`
+const GET_DATA = gql`
 
-    query($mod: String!, $ep: String!){
-        Cours(mod:$mod){
-            teacher
-        }
-        Ep(mod: $mod, ep: $ep) {
-            title
-            vd
-        }
-    }
-`
-
-export default function Vd({ep,mod}){
-    const {loading,error,data} = useQuery(GET_VD,{variables:{mod,ep}})
-    const router = useRouter()
-    if(error) router.push('/')
-    const loadingRef = useRef()
-    return <>
-        <section className={Style.Vd}>
-            {
-                data ?
-                <>
-                    <div className={Style.Ivd}>
-                        <iframe 
-                        onLoadCapture={()=>loadingRef.current.style.display = "none"}
-                        src={data.Ep.vd} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" onLoad={()=>console.log('im loading...')} allowFullScreen/>
-                        <div ref={loadingRef} className={Style.logo}><h1>loading...</h1></div>
-                    </div>
-                    <Vdinfo title={data.Ep.title} teacher={data.Cours.teacher} ep={ep} /> 
-                </>
-                : loading && <h1>loading...</h1>
-
-            }
-        </section>
-    </>
-
+query($mod: String!, $ep: String!, $cat: String!){
+  Vd(mod: $mod, ep: $ep, cat: $cat) {
+    vd
+  }
 }
 
-function Vdinfo({title,teacher,ep}){
+`
+
+export default function Vd({mod,ep,cat}){
+    const [Vd,{error,data,loading}] = useLazyQuery(GET_DATA)
+    const router = useRouter()
+
+    useEffect(()=>{
+        if(error){
+            router.replace(`/cours/${mod}?ep=${ep}&cat=doju`)
+        }
+        Vd({ variables: { mod, ep,cat } })
+    },[error])
 
     return <>
-        <div className={Style.Ivdinfo}>
-            <h1>{title}</h1>
-            <p dir="rtl">
-                الاستاذ : <span>{teacher}</span>
-                <br/>
-                الحلقة : <span>{parseInt(ep) + 1}</span>
-            </p>
+    {
+        loading 
+        ? 
+        <div
+        style={{background:"#1a1a1a"}}
+        className={Style.Vd}></div>   
+        :
+        data  &&
+        <div className={Style.Vd}>
+            <iframe src={data.Vd.vd} frameBorder="0"/>
         </div>
-    </>
+    }
+    </> 
 
 }

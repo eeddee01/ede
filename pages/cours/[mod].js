@@ -1,56 +1,68 @@
 import {useEffect} from 'react'
 import { useRouter } from 'next/router'
-import Swticher from '../../components/cours/switcher'
-import Txt from '../../components/cours/txt'
+import {useLazyQuery,gql} from '@apollo/client'
+import Style from '../../styles/Vd.module.css'
 import Vd from '../../components/cours/vd'
-import Vdlist from '../../components/cours/vdlist'
+import VdInfo from '../../components/cours/vdinfo'
+import VdList from '../../components/cours/vdList'
+const GET_DATA = gql`
 
-export default function Learn(){   
-
-    const router = useRouter()
-    const {mod,type,ep,...huh} = router.query;
-
-
-    useEffect(() => {
-    if(mod){
-        if(type && ep){
-            if(huh){
-                router.replace({
-                    pathname:`/cours/${mod}`,
-                    query:{ep,type}
-                })
-            }
-            if(type !== "vd" && type !== "txt"){
-                router.replace({
-                    pathname:`/cours/${mod}`,
-                    query:{ep,type:"txt"}
-                })
-            }
-        }else if(ep) router.replace({
-            pathname:`/cours/${mod}`,
-            query:{ep,type:"txt"}
-        })
-        else router.replace({
-            pathname:`/cours/${mod}`,
-            query:{ep:0,type:"txt"}
-        })
+query($mod: String!, $ep: String!){
+    Cours(mod: $mod) {
+        pdf
     }
-    }, [mod,type,ep])
-    
-        
+    Ep(mod: $mod, ep: $ep) {
+        title
+        vds {
+            type
+        }
+    }
+}
 
-    
-    
+`
 
-    
+export default function Cours(){
+ 
+    const router = useRouter()
+    const {mod,ep,cat,...huh} = router.query;
+    const [Ep, { loading, error, data }] = useLazyQuery(GET_DATA)
+    useEffect(() => {
+        if(mod){
+            console.log('caaattts')
+            if(ep && cat){
+                Ep({ variables: { mod, ep } })
+            }else{
+                if(ep){
+                    router.replace(`/cours/${mod}?ep=${ep}&cat=doju`)
+                }else if(cat){
+                    router.replace(`/cours/${mod}?ep=0&cat=${cat}`)
+                }else{
+                    router.replace(`/cours/${mod}?ep=0&cat=doju`)
+                }
+            }
+        }
+        if(error){
+            router.replace('/')
+        }
 
+    }, [mod,ep,cat])
     return <>
-        
-        <Swticher mod={mod} ep={ep} type={type} />
-        {type === "txt" && <Txt ep={ep} mod={mod} /> }
-        {type === "vd" && <Vd ep={ep} mod={mod} /> }
-        <Vdlist mod={mod} type={type} />
-
-        
+        <section>
+        {   data 
+            ?
+            <>
+            <section className={Style.Sec}>
+                <div className={Style.MyVd}>
+                    <Vd cat={cat} ep={ep} mod={mod} />
+                    <VdList  mod={mod} ep={ep} />
+                </div>
+                <VdInfo pdf={data.Cours.pdf} mod={mod} ep={ep} cat={cat} title={data.Ep.title} vds={data.Ep.vds}/>
+            </section>
+            </>
+            :
+            error && <h1 style={{color:"#eee"}}>not found</h1>
+        }
+        </section>
     </>
+    
 }
